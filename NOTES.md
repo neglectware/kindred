@@ -4,7 +4,7 @@ Built 2026-11-12, revised 2026-11-13 (build 2: the menu fault, macOS 10.13 unive
 
 ## What it is
 
-Kindred is a web prototype (called v2 below; its engine is in `tests/golden/prototype/`) as a native plug-in: AU MIDI effect (`aumi Kndr Nglw`) for Logic, VST3, and a Standalone app. JUCE 8.0.8, CMake. macOS: universal (x86_64 and arm64), 10.13 or later. Windows x64: VST3 and Standalone, built by `.github/workflows/build.yml`. Version 0.9.0 build 2. About 6,000 lines of C++, JavaScript and shell in `src/`, `tools/` and `tests/`.
+Kindred is a web prototype (called v2 below; its engine is in `tests/golden/prototype/`) as a native plug-in: AU MIDI effect (`aumi Kndr Nglw`) for Logic, VST3, and a Standalone app. JUCE 8.0.8, CMake. macOS: universal (x86_64 and arm64), 10.13 or later. Windows x64: VST3 and Standalone, built by `.github/workflows/build.yml`. Version 0.9.1 build 3. About 6,000 lines of C++, JavaScript and shell in `src/`, `tools/` and `tests/`.
 
 ## The name
 
@@ -167,3 +167,7 @@ Tests of the Intel half, under Rosetta on this Mac: golden equivalence 80,894 co
 - `.github/workflows/build.yml`: Windows x64 zip (VST3 folder, `Kindred.exe`, `INSTALL-Windows.txt`, the manual), then the engine tests and the host test on Windows; macOS universal bundles, the minimum-version check, the engine tests (also as x86_64 when the runner can), the host test and the UI test. JUCE is cloned at tag 8.0.8. Nothing is published: artifacts only.
 
 **Unverified until the workflow runs:** that MSVC compiles the sources at all; that the golden test passes on Windows (the engine calls `std::pow` in one place, with a small whole-number exponent; the result must equal V8's to the last bit, and it does on both Mac architectures, but the Windows C library is a third implementation); that the VST3 loads; that the zip step finds the files where the Visual Studio generator puts them; that the macOS runner's Xcode accepts a 10.13 target; that the UI test runs on a runner without a display session.
+
+## Window size fault (2026-11-13, build 3)
+
+Report: the editor opened smaller than expected on a 4K display (macOS "looks like 3200 x 1800"). It was the minimum size, 840 points wide, not a scaling fault: the UI test and the screenshot tool resize editors and the editor saves its width to the user settings file (`editorW`), so the tools left 840 there and every new editor opened at 840. Fix: the tools set `KINDRED_SETTINGS_FILE` to a scratch file before they start, `KindredProcessor::settings()` uses that file when the variable is set, and `tools/build.sh` fails if the UI test changes the user's settings file. A user who already has 840 saved drags the corner once; the new width is saved.

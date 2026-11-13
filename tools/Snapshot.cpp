@@ -30,7 +30,17 @@ static void timePaint(KindredEditor& ed, const char* what, float scale) {
     std::printf("            playing frame (stage + arrangement, %d x %d px): mean %.2f ms, worst %.2f ms\n", roundToInt(stage.getWidth() * scale), roundToInt(stage.getHeight() * scale), total / N, worst);
 }
 
+// Tools never write the user's settings: point Kindred at a scratch settings file first.
+static void useScratchSettings() {
+    const auto f = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("kindred-tools.settings").getFullPathName();
+   #ifdef _WIN32
+    _putenv_s("KINDRED_SETTINGS_FILE", f.toRawUTF8());
+   #else
+    setenv("KINDRED_SETTINGS_FILE", f.toRawUTF8(), 1);
+   #endif
+}
 int main(int argc, char** argv) {
+    useScratchSettings();
     ScopedJuceInitialiser_GUI init;
     const File dir(argc > 1 ? File::getCurrentWorkingDirectory().getChildFile(argv[1]) : File::getCurrentWorkingDirectory());
     dir.createDirectory();

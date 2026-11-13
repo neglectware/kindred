@@ -42,7 +42,7 @@ Then read the [user manual](docs/manual.md). Section 1 is a quick start in Logic
 
 ## Status
 
-Version 0.9.0. Tested on macOS 15 (Apple silicon) in Logic Pro. The Intel build passes its tests under Rosetta. Nobody has run it on macOS 10.13 or on Windows yet; reports are welcome in Issues.
+Version 0.9.1. Tested on macOS 15 (Apple silicon) in Logic Pro. The Intel build passes its tests under Rosetta. Nobody has run it on macOS 10.13 or on Windows yet; reports are welcome in Issues.
 
 Vendor: Neglectware. AI-authored, human-directed. License: GNU AGPL v3 (see `LICENSE`), as JUCE requires for open-source use.
 

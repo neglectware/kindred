@@ -46,7 +46,10 @@ juce::PropertiesFile& KindredProcessor::settings() {
         juce::PropertiesFile::Options o;
         o.applicationName = KINDRED_PRODUCT_NAME; o.filenameSuffix = ".settings"; o.folderName = juce::String(KINDRED_COMPANY_NAME) + "/" + KINDRED_PRODUCT_NAME;
         o.osxLibrarySubFolder = "Application Support"; o.millisecondsBeforeSaving = 500;
-        file = std::make_unique<juce::PropertiesFile>(o);
+        // KINDRED_SETTINGS_FILE (set by the test and screenshot tools) keeps their window sizes and theme
+        // out of the user's own settings.
+        const auto over = juce::SystemStats::getEnvironmentVariable("KINDRED_SETTINGS_FILE", {});
+        file = over.isNotEmpty() ? std::make_unique<juce::PropertiesFile>(juce::File(over), o) : std::make_unique<juce::PropertiesFile>(o);
     });
     return *file;
 }

@@ -24,8 +24,12 @@ if arch -x86_64 /usr/bin/true 2>/dev/null; then      # the Intel half, when this
   arch -x86_64 build/KindredHostTest_artefacts/Release/KindredHostTest "$A/VST3/$NAME.vst3" > tests/out/hosttest-x86_64.log 2>&1 || { tail -30 tests/out/hosttest-x86_64.log; exit 1; }
   echo "x86_64: $(tail -1 tests/out/hosttest-x86_64.log)"
 fi
+USERSET="$HOME/Library/Application Support/Neglectware/$NAME/$NAME.settings"
+before=$( [[ -f "$USERSET" ]] && md5 -q "$USERSET" || echo none )
 build/KindredUiTest_artefacts/Release/KindredUiTest > tests/out/uitest.log 2>&1 || { tail -30 tests/out/uitest.log; exit 1; }
 tail -2 tests/out/uitest.log
+after=$( [[ -f "$USERSET" ]] && md5 -q "$USERSET" || echo none )
+[[ "$before" == "$after" ]] || { echo "UI test changed the user's settings file ($USERSET)"; exit 1; }
 [[ "${1:-}" == "--no-install" ]] && exit 0
 ditto "$A/AU/$NAME.component" "$HOME/Library/Audio/Plug-Ins/Components/$NAME.component"
 ditto "$A/VST3/$NAME.vst3" "$HOME/Library/Audio/Plug-Ins/VST3/$NAME.vst3"

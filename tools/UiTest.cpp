@@ -173,7 +173,17 @@ static void legacyProbe() {
     PopupMenu::dismissAllActiveMenus(); pump(50);
 }
 
+// Tools never write the user's settings: point Kindred at a scratch settings file first.
+static void useScratchSettings() {
+    const auto f = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("kindred-tools.settings").getFullPathName();
+   #ifdef _WIN32
+    _putenv_s("KINDRED_SETTINGS_FILE", f.toRawUTF8());
+   #else
+    setenv("KINDRED_SETTINGS_FILE", f.toRawUTF8(), 1);
+   #endif
+}
 int main(int argc, char** argv) {
+    useScratchSettings();
     ScopedJuceInitialiser_GUI init;
     MenuNumbers mn; int sizes = 0;
     auto proc = std::make_unique<KindredProcessor>();

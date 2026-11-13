@@ -2,7 +2,7 @@
 
 Kindred writes chord progressions and arranges them into a song. It sends MIDI. It makes no sound of its own in a DAW: put it before an instrument.
 
-Version 0.9.0. Formats: Audio Unit MIDI effect (Logic Pro, MainStage), VST3, and a standalone application. macOS 10.13 or later (Intel and Apple silicon). Windows 10 or later, 64-bit (VST3 and the application; see `INSTALL-Windows.txt`).
+Version 0.9.1. Formats: Audio Unit MIDI effect (Logic Pro, MainStage), VST3, and a standalone application. macOS 10.13 or later (Intel and Apple silicon). Windows 10 or later, 64-bit (VST3 and the application; see `INSTALL-Windows.txt`).
 
 ## 1. Quick start in Logic Pro
 
