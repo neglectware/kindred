@@ -1,0 +1,51 @@
+Kindred for Windows (VST3 and standalone application, 64-bit)
+=============================================================
+
+NOTE: Nobody has tested Kindred on Windows. A build server compiles each
+build and runs the automatic tests there, but no person has opened the
+plug-in or the application on a Windows computer. Please tell us what occurs:
+the plug-in loads or not, it sends notes or not, a control does the wrong
+thing.
+
+The build is not signed. Windows or your host can show a warning when you
+start it for the first time. This warning is expected.
+
+Kindred makes chord progressions and sends them as MIDI notes. It makes no
+sound. Put an instrument after it.
+
+To install the plug-in:
+
+1. Copy the "Kindred.vst3" folder from this zip file to this folder:
+
+       C:\Program Files\Common Files\VST3\
+
+   If the folder does not exist, make it. You must have administrator
+   permission to copy files into Program Files.
+
+2. Start your host again, or tell it to scan for plug-ins again.
+
+3. Find the plug-in under Neglectware > Kindred. It is a VST3 effect that
+   sends MIDI. Your host must be able to send the MIDI output of a VST3 effect
+   to an instrument. Not every host can do this. Refer to the manual of your
+   host for "MIDI output of a plug-in" or "MIDI effect".
+
+To use the application without a host:
+
+1. Copy "Kindred.exe" to a folder of your choice and start it.
+
+2. Open Options > Audio/MIDI Settings and select a MIDI output. To send the
+   notes to another program on the same computer, you need a virtual MIDI
+   port (for example loopMIDI). The application also has a pad sound of its
+   own. Turn it off in Menu > Performance settings when you use a MIDI
+   output.
+
+Your own style files go in this folder (Menu > Open the Styles folder):
+
+       %APPDATA%\Neglectware\Kindred\Styles
+
+To remove Kindred, delete "Kindred.vst3", "Kindred.exe" and the folder
+%APPDATA%\Neglectware\Kindred.
+
+Requirements: Windows 10 or later, 64-bit. No other software is necessary.
+
+The manual is the file "Manual.md" in this zip file.

@@ -1,0 +1,195 @@
+name: Build
+
+# Windows (x64): VST3 and the standalone application, in one zip.
+# macOS: universal bundles (Apple silicon and Intel) for macOS 10.13 and later, plus the tests.
+#
+# GitHub Actions is the only Windows build machine of this project. Nobody who works on it has a
+# Windows computer, so the Windows build is not tested by a person until someone runs the zip.
+# Nothing is published from here: the results are workflow artifacts only.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+env:
+  JUCE_TAG: 8.0.8
+
+jobs:
+  windows:
+    name: Windows x64 (VST3 + Standalone)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Clone JUCE ${{ env.JUCE_TAG }}
+        shell: bash
+        run: git clone --depth 1 --branch "${{ env.JUCE_TAG }}" https://github.com/juce-framework/JUCE.git "${{ github.workspace }}/JUCE"
+
+      - name: Read the version from src/Product.h
+        id: ver
+        shell: bash
+        run: |
+          set -euo pipefail
+          V=$(sed -n 's/.*#define KINDRED_VERSION "\([^"]*\)".*/\1/p' src/Product.h)
+          B=$(sed -n 's/.*#define KINDRED_BUILD \([0-9]*\).*/\1/p' src/Product.h)
+          N=$(sed -n 's/.*#define KINDRED_PRODUCT_NAME "\([^"]*\)".*/\1/p' src/Product.h)
+          T=$(sed -n 's/.*#define KINDRED_TARGET_NAME "\([^"]*\)".*/\1/p' src/Product.h)
+          if [ -z "$V" ] || [ -z "$B" ] || [ -z "$N" ] || [ -z "$T" ]; then
+            echo "Could not read the version or the names from src/Product.h" >&2
+            exit 1
+          fi
+          echo "full=${V}.${B}" >> "$GITHUB_OUTPUT"
+          echo "name=${N}" >> "$GITHUB_OUTPUT"
+          echo "target=${T}" >> "$GITHUB_OUTPUT"
+
+      - name: Configure (Visual Studio, x64)
+        # No -G: CMake picks the Visual Studio generator that matches what is on the runner.
+        # A generator named in full ("Visual Studio 17 2022") fails when windows-latest moves
+        # to another Visual Studio version; the default generator follows it.
+        run: cmake -S . -B build -A x64 -DJUCE_DIR="${{ github.workspace }}/JUCE"
+
+      - name: Build the plug-in (Release)
+        run: cmake --build build --config Release --target ${{ steps.ver.outputs.target }}_VST3 ${{ steps.ver.outputs.target }}_Standalone
+
+      - name: Package the zip
+        shell: bash
+        run: |
+          set -euo pipefail
+          P="${{ steps.ver.outputs.name }}"
+          NAME="${P}-${{ steps.ver.outputs.full }}-windows-x64"
+          BUNDLE=$(find build -type d -iname "${P}.vst3" | head -n1)
+          EXE=$(find build -type f -path "*Standalone*" -iname "${P}.exe" | head -n1)
+          if [ -z "$BUNDLE" ] || [ -z "$EXE" ]; then
+            echo "Build output not found. What the build made:" >&2
+            find build -maxdepth 6 \( -iname "*.vst3" -o -iname "*.exe" \) >&2 || true
+            exit 1
+          fi
+          mkdir -p "dist/$NAME"
+          cp -R "$BUNDLE" "dist/$NAME/"
+          cp "$EXE" "dist/$NAME/"
+          cp INSTALL-Windows.txt "dist/$NAME/"
+          cp docs/manual.md "dist/$NAME/Manual.md"
+          mkdir -p dist-zip
+          powershell -NoProfile -Command "Compress-Archive -Path 'dist/${NAME}' -DestinationPath 'dist-zip/${NAME}.zip' -Force"
+          echo "zip_path=dist-zip/${NAME}.zip" >> "$GITHUB_ENV"
+          echo "zip_name=${NAME}.zip" >> "$GITHUB_ENV"
+          echo "vst3_path=${BUNDLE}" >> "$GITHUB_ENV"
+
+      - name: Upload the zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.zip_name }}
+          path: ${{ env.zip_path }}
+
+      # The tests run after the upload, so a failed test still leaves a zip to look at.
+      - name: Build the tests
+        run: cmake --build build --config Release --target KindredGolden KindredRules KindredPlayerTest KindredHostTest
+
+      - name: Engine tests (golden equivalence, rules, scheduler)
+        shell: bash
+        run: |
+          set -euo pipefail
+          exe() { find build -type f -iname "$1.exe" | head -n1; }
+          node tests/golden/gen-fixtures.js build/fixtures.jsonl 3000 20261112
+          "$(exe KindredGolden)" styles/warm-ambient.json build/fixtures.jsonl | tail -3
+          "$(exe KindredGolden)" styles/warm-ambient.json build/fixtures.jsonl --shipped | tail -1
+          for style in styles/*.json; do "$(exe KindredRules)" "$style" 1800 20261111 | grep -v "^note:"; done
+          "$(exe KindredPlayerTest)" styles/warm-ambient.json 2000 7
+
+      - name: Host test (the built VST3, loaded through JUCE hosting)
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$(find build -type f -iname "KindredHostTest.exe" | head -n1)" "${{ env.vst3_path }}" | tail -45
+
+  macos:
+    name: macOS universal (10.13 and later) + tests
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Clone JUCE ${{ env.JUCE_TAG }}
+        run: git clone --depth 1 --branch "${{ env.JUCE_TAG }}" https://github.com/juce-framework/JUCE.git "${{ github.workspace }}/JUCE"
+
+      - name: Read the names from src/Product.h
+        id: ver
+        run: |
+          set -euo pipefail
+          V=$(sed -n 's/.*#define KINDRED_VERSION "\([^"]*\)".*/\1/p' src/Product.h)
+          B=$(sed -n 's/.*#define KINDRED_BUILD \([0-9]*\).*/\1/p' src/Product.h)
+          echo "full=${V}.${B}" >> "$GITHUB_OUTPUT"
+          echo "name=$(sed -n 's/.*#define KINDRED_PRODUCT_NAME "\([^"]*\)".*/\1/p' src/Product.h)" >> "$GITHUB_OUTPUT"
+          echo "target=$(sed -n 's/.*#define KINDRED_TARGET_NAME "\([^"]*\)".*/\1/p' src/Product.h)" >> "$GITHUB_OUTPUT"
+
+      - name: Configure (Xcode; arm64 + x86_64, deployment target 10.13 from CMakeLists.txt)
+        run: cmake -S . -B build -G Xcode -DJUCE_DIR="${{ github.workspace }}/JUCE"
+
+      - name: Build the plug-in and the tests (Release)
+        run: >
+          cmake --build build --config Release --target
+          ${{ steps.ver.outputs.target }}_AU ${{ steps.ver.outputs.target }}_VST3 ${{ steps.ver.outputs.target }}_Standalone
+          KindredGolden KindredRules KindredPlayerTest KindredHostTest KindredUiTest -- -quiet
+
+      - name: Minimum system version of each bundle, per architecture
+        run: |
+          set -euo pipefail
+          A="build/${{ steps.ver.outputs.target }}_artefacts/Release"; N="${{ steps.ver.outputs.name }}"
+          tools/minos.sh "$A/AU/$N.component" "$A/VST3/$N.vst3" "$A/Standalone/$N.app" | tee minos.txt
+          # Three bundles, two architectures each. The Intel half must say 10.13. The Apple silicon
+          # half says 11.0: no older macOS runs on Apple silicon, so the linker never writes less.
+          test "$(grep -c "x86_64  minos 10.13 " minos.txt)" = 3
+          test "$(grep -c "arm64  minos 11.0 " minos.txt)" = 3
+
+      - name: Package the bundles
+        run: |
+          set -euo pipefail
+          A="build/${{ steps.ver.outputs.target }}_artefacts/Release"; N="${{ steps.ver.outputs.name }}"
+          NAME="${N}-${{ steps.ver.outputs.full }}-macos-universal"
+          mkdir -p "dist/$NAME"
+          ditto "$A/AU/$N.component" "dist/$NAME/$N.component"
+          ditto "$A/VST3/$N.vst3" "dist/$NAME/$N.vst3"
+          ditto "$A/Standalone/$N.app" "dist/$NAME/$N.app"
+          cp docs/manual.md "dist/$NAME/Manual.md"
+          ditto -c -k --keepParent "dist/$NAME" "$NAME.zip"
+          echo "zip_name=${NAME}.zip" >> "$GITHUB_ENV"
+
+      - name: Upload the bundles
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.zip_name }}
+          path: ${{ env.zip_name }}
+
+      - name: Engine tests (golden equivalence, rules, scheduler)
+        run: |
+          set -euo pipefail
+          R=build/Release
+          node tests/golden/gen-fixtures.js build/fixtures.jsonl 3000 20261112
+          $R/KindredGolden styles/warm-ambient.json build/fixtures.jsonl | tail -3
+          $R/KindredGolden styles/warm-ambient.json build/fixtures.jsonl --shipped | tail -1
+          if arch -x86_64 /usr/bin/true 2>/dev/null; then
+            echo "x86_64: $(arch -x86_64 $R/KindredGolden styles/warm-ambient.json build/fixtures.jsonl | tail -1)"
+          else
+            echo "x86_64: not run (this runner cannot run Intel programs)"
+          fi
+          for style in styles/*.json; do $R/KindredRules "$style" 1800 20261111 | grep -v "^note:"; done
+          $R/KindredPlayerTest styles/warm-ambient.json 2000 7
+
+      - name: Host test (the built VST3, loaded through JUCE hosting)
+        run: |
+          set -euo pipefail
+          A="build/${{ steps.ver.outputs.target }}_artefacts/Release"; N="${{ steps.ver.outputs.name }}"
+          build/KindredHostTest_artefacts/Release/KindredHostTest "$A/VST3/$N.vst3" | tail -45
+          if arch -x86_64 /usr/bin/true 2>/dev/null; then
+            arch -x86_64 build/KindredHostTest_artefacts/Release/KindredHostTest "$A/VST3/$N.vst3" | tail -2
+          fi
+
+      - name: UI test (every control and every menu, with synthetic mouse and key events)
+        run: build/KindredUiTest_artefacts/Release/KindredUiTest | tail -12

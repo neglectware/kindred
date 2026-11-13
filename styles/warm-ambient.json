@@ -1,0 +1,457 @@
+{
+  "format": 1,
+  "id": "warm-ambient",
+  "name": "Warm Ambient",
+  "description": "Slow, connected chords over a bass that drones and moves. Small diatonic vocabulary, plagal motion, add9 and sus colors, every change keeps a shared note.",
+  "defaults": {
+    "mode": "ionian",
+    "tempo": 60,
+    "bpb": 4,
+    "tie": true,
+    "sections": ["home", "lift", "away", "return"],
+    "arrangement": [[0, 16], [1, 8], [0, 8], [2, 8], [1, 8], [0, 8], [3, 8]]
+  },
+  "modes": [
+    {
+      "id": "lydian",
+      "name": "Lydian",
+      "steps": [0, 2, 4, 6, 7, 9, 11],
+      "minor": false,
+      "borrow": [],
+      "planBias": {"moving": 0.4, "md": 0.8, "*": 1.4}
+    },
+    {"id": "ionian", "name": "Major", "steps": [0, 2, 4, 5, 7, 9, 11], "minor": false, "borrow": ["iv", "bVII"]},
+    {"id": "mixolydian", "name": "Mixolydian", "steps": [0, 2, 4, 5, 7, 9, 10], "minor": false, "borrow": ["iv"]},
+    {"id": "dorian", "name": "Dorian", "steps": [0, 2, 3, 5, 7, 9, 10], "minor": true, "borrow": []},
+    {"id": "aeolian", "name": "Minor", "steps": [0, 2, 3, 5, 7, 8, 10], "minor": true, "borrow": []}
+  ],
+  "spectra": [
+    {
+      "id": "wistful",
+      "name": "Brightness",
+      "low": "Bright",
+      "high": "Wistful",
+      "lowHint": "major chords",
+      "highHint": "more minor chords",
+      "min": 0,
+      "max": 1,
+      "default": 0.35
+    },
+    {
+      "id": "moving",
+      "name": "Bass motion",
+      "low": "Drone",
+      "high": "Moving",
+      "lowHint": "the bass holds",
+      "highHint": "the bass follows the chords",
+      "min": 0,
+      "max": 1,
+      "default": 0.5
+    },
+    {"id": "color", "name": "Color", "low": "Plain", "high": "Rich", "lowHint": "triads", "highHint": "add9, maj7, sus", "min": 0, "max": 1, "default": 0.5},
+    {
+      "id": "inner",
+      "name": "Inner movement",
+      "low": "Still",
+      "high": "Flowing",
+      "lowHint": "none",
+      "highHint": "suspensions and passing notes",
+      "min": 0,
+      "max": 1,
+      "default": 0.5
+    },
+    {
+      "id": "surprise",
+      "name": "Surprise",
+      "low": "In key",
+      "high": "Borrowed",
+      "lowHint": "diatonic only",
+      "highHint": "one borrowed chord",
+      "min": 0,
+      "max": 1,
+      "default": 0.2
+    },
+    {
+      "id": "leadins",
+      "name": "Lead-ins",
+      "low": "None",
+      "high": "Often",
+      "lowHint": "no approach chords",
+      "highHint": "a short chord before a change",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "id": "edge",
+      "name": "Edge",
+      "low": "Pretty",
+      "high": "Strange",
+      "lowHint": "every change shares a note",
+      "highHint": "extended colors, distant chords",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    }
+  ],
+  "extended": {"name": "Extended colors", "hint": "6, 6/9, maj9, m9, m11, ♯11"},
+  "extensions": {
+    "maj": [
+      {"s": "", "iv": [0, 4, 7], "t": "plain"},
+      {"s": "add9", "iv": [0, 4, 7, 14], "t": "add9"},
+      {"s": "sus2", "iv": [0, 2, 7], "t": "sus2"},
+      {"s": "maj7", "iv": [0, 4, 7, 11], "t": "maj7"},
+      {"s": "sus4", "iv": [0, 5, 7], "t": "sus4"},
+      {"s": "6", "iv": [0, 4, 7, 9], "t": "jazz"},
+      {"s": "6/9", "iv": [0, 4, 7, 9, 14], "t": "jazz"},
+      {"s": "maj9", "iv": [0, 4, 7, 11, 14], "t": "jazz"},
+      {"s": "maj7♯11", "iv": [0, 4, 7, 11, 18], "t": "jazz"},
+      {"s": "9sus4", "iv": [0, 5, 7, 10, 14], "t": "jazz"}
+    ],
+    "min": [
+      {"s": "m", "iv": [0, 3, 7], "t": "plain"},
+      {"s": "m7", "iv": [0, 3, 7, 10], "t": "m7"},
+      {"s": "m(add9)", "iv": [0, 3, 7, 14], "t": "madd9"},
+      {"s": "m9", "iv": [0, 3, 7, 10, 14], "t": "jazz"},
+      {"s": "m11", "iv": [0, 3, 7, 10, 14, 17], "t": "jazz"},
+      {"s": "m6", "iv": [0, 3, 7, 9], "t": "jazz"}
+    ],
+    "dim": [
+      {"s": "°", "iv": [0, 3, 6], "t": "plain"}
+    ]
+  },
+  "colorWeights": {
+    "plain": {
+      "base": 0.35,
+      "plain": 1.5,
+      "degree": {"7maj": 0.6},
+      "degreeOwnRootOnly": true
+    },
+    "add9": {"color": 1.3, "overDrone": 0.3},
+    "sus2": {"color": 0.5},
+    "maj7": {
+      "color": 0.8,
+      "degree": {"5": 1.3},
+      "degreeDefault": 0.8,
+      "overDrone": 0.3
+    },
+    "sus4": {"base": 0.15, "color": 1.6},
+    "m7": {"color": 1.1},
+    "madd9": {"color": 0.25},
+    "default": {"color": 0.35}
+  },
+  "tokens": {
+    "I": [0, "maj"],
+    "i": [0, "min"],
+    "ii": [2, "min"],
+    "II": [2, "maj"],
+    "bIII": [3, "maj"],
+    "iii": [4, "min"],
+    "IV": [5, "maj"],
+    "iv": [5, "min"],
+    "V": [7, "maj"],
+    "v": [7, "min"],
+    "bVI": [8, "maj"],
+    "vi": [9, "min"],
+    "bVII": [10, "maj"],
+    "vii": [11, "min"]
+  },
+  "cells": {
+    "ionian": {
+      "home": [
+        ["I IV I IV", 1.5, 0],
+        ["I IV I V", 0.9, 0.5],
+        ["I I IV I", 0.8, 0],
+        ["I IV I I", 0.6, 0],
+        ["I vi IV I", 1.1, 0.3],
+        ["I vi IV V", 0.9, 0.6],
+        ["I vi IV IV", 0.8, 0.3],
+        ["I iii IV IV", 0.45, 0.4],
+        ["I iii IV V", 0.35, 0.6],
+        ["I ii IV I", 0.7, 0.4],
+        ["I ii I ii", 0.5, 0],
+        ["I ii I IV", 0.6, 0.1],
+        ["I ii IV V", 0.45, 0.7],
+        ["I V vi IV", 0.7, 0.9],
+        ["I IV vi IV", 1, 0.3],
+        ["I vi I IV", 0.6, 0.2],
+        ["I V IV I", 0.6, 0.5],
+        ["I V IV IV", 0.6, 0.5],
+        ["I V I IV", 0.7, 0.2],
+        ["I IV V IV", 0.5, 0.7],
+        ["I vi ii V", 0.3, 1],
+        ["I IV ii V", 0.4, 0.8]
+      ],
+      "lift": [
+        ["IV I IV I", 1.2, 0],
+        ["IV I IV V", 1.2, 0.4],
+        ["IV I ii V", 0.4, 0.7],
+        ["IV I vi V", 0.6, 0.6],
+        ["IV vi I V", 0.5, 0.6],
+        ["IV vi IV V", 0.5, 0.5],
+        ["vi IV I V", 1.2, 0.7],
+        ["vi IV I I", 0.9, 0.3],
+        ["vi IV I IV", 0.8, 0.3],
+        ["vi I IV V", 0.5, 0.6],
+        ["vi IV ii V", 0.3, 0.9],
+        ["ii IV I I", 0.7, 0.3],
+        ["ii IV I V", 0.7, 0.6],
+        ["ii vi IV I", 0.4, 0.5],
+        ["IV V I I", 0.4, 0.8],
+        ["IV V vi IV", 0.4, 0.9]
+      ],
+      "away": [
+        ["vi ii IV V", 0.6, 0.8],
+        ["vi IV ii V", 0.5, 0.8],
+        ["vi iii IV I", 0.6, 0.4],
+        ["ii vi IV V", 0.5, 0.7],
+        ["vi IV vi IV", 0.7, 0],
+        ["IV iii ii I", 0.6, 0.4],
+        ["vi V IV V", 0.5, 0.6],
+        ["ii iii IV V", 0.35, 0.8],
+        ["vi vi IV IV", 0.6, 0],
+        ["ii IV vi V", 0.4, 0.6],
+        ["vi IV I V", 0.6, 0.6]
+      ],
+      "ped5": [["IV I IV V", 1.2, 0], ["I IV I V", 1, 0], ["ii I IV V", 0.7, 0], ["IV I ii V", 0.7, 0], ["I ii I V", 0.6, 0], ["IV I IV I", 0.8, 0], ["I IV I IV", 0.6, 0]],
+      "close": [["IV I IV I", 1.2, 0], ["I IV I I", 1, 0], ["ii IV I I", 0.6, 0], ["vi IV I I", 0.7, 0], ["IV IV I I", 0.7, 0], ["V IV I I", 0.5, 0]]
+    },
+    "lydian": {
+      "home": [
+        ["I II I II", 1.6, 0],
+        ["I I II I", 1, 0],
+        ["I II I I", 0.8, 0],
+        ["I vii I II", 0.6, 0],
+        ["I II vii I", 0.6, 0.3],
+        ["I vi II I", 0.5, 0.5],
+        ["I V II I", 0.4, 0.6],
+        ["I II I vii", 0.6, 0.1],
+        ["I II vi II", 0.4, 0.5],
+        ["I II I V", 0.4, 0.4]
+      ],
+      "lift": [
+        ["II I II I", 1.2, 0],
+        ["vi II I I", 0.6, 0.5],
+        ["II vii I I", 0.6, 0.3],
+        ["V II I I", 0.5, 0.6],
+        ["II I vi II", 0.4, 0.5],
+        ["vii I II I", 0.6, 0.1],
+        ["II I II vii", 0.5, 0.2]
+      ],
+      "away": [["vi II vi II", 0.7, 0.2], ["vii vi II I", 0.4, 0.6], ["vi vii I II", 0.5, 0.5], ["II vii vi II", 0.4, 0.5], ["vii I vii II", 0.6, 0.1], ["vi vi II II", 0.5, 0]],
+      "ped5": [],
+      "close": [["II I II I", 1.2, 0], ["I II I I", 1, 0], ["vii II I I", 0.5, 0], ["vi II I I", 0.6, 0], ["II II I I", 0.6, 0]]
+    },
+    "mixolydian": {
+      "home": [
+        ["I bVII IV I", 1.5, 0.4],
+        ["I bVII I bVII", 1.2, 0],
+        ["I bVII IV IV", 0.8, 0.4],
+        ["I IV I bVII", 0.9, 0.1],
+        ["I bVII I IV", 0.9, 0.1],
+        ["I v IV I", 0.6, 0.5],
+        ["I I bVII I", 0.8, 0],
+        ["I IV bVII I", 0.8, 0.4],
+        ["I IV bVII IV", 0.7, 0.4],
+        ["I ii bVII I", 0.4, 0.5],
+        ["I IV I IV", 0.7, 0]
+      ],
+      "lift": [
+        ["bVII IV I I", 1.2, 0.4],
+        ["IV I bVII I", 0.9, 0.2],
+        ["IV bVII I I", 0.8, 0.4],
+        ["v IV I I", 0.6, 0.5],
+        ["bVII IV bVII I", 0.7, 0.3],
+        ["IV I IV bVII", 0.6, 0.2],
+        ["bVII I bVII IV", 0.6, 0.2],
+        ["vi IV bVII I", 0.4, 0.7]
+      ],
+      "away": [
+        ["v IV v IV", 0.6, 0.2],
+        ["ii IV bVII I", 0.5, 0.6],
+        ["IV bVII IV v", 0.5, 0.4],
+        ["vi IV bVII bVII", 0.4, 0.5],
+        ["ii bVII IV IV", 0.5, 0.5],
+        ["v bVII IV I", 0.5, 0.6]
+      ],
+      "ped5": [["IV I IV I", 1, 0], ["IV I bVII IV", 0.8, 0], ["I IV I IV", 0.8, 0], ["bVII I IV IV", 0.6, 0]],
+      "close": [["bVII IV I I", 1.2, 0], ["IV I bVII I", 0.8, 0], ["I bVII I I", 0.8, 0], ["IV I IV I", 0.8, 0], ["bVII I bVII I", 0.7, 0]]
+    },
+    "dorian": {
+      "home": [
+        ["i IV i IV", 1.5, 0],
+        ["i bVII IV IV", 0.8, 0.4],
+        ["i bIII IV i", 0.7, 0.4],
+        ["i IV bVII i", 0.7, 0.4],
+        ["i i IV i", 0.8, 0],
+        ["i v IV i", 0.5, 0.5],
+        ["i IV i bVII", 0.7, 0.1]
+      ],
+      "lift": [["IV i IV i", 1.2, 0], ["bIII IV i i", 0.8, 0.4], ["bVII IV i i", 0.9, 0.4], ["IV bVII i i", 0.7, 0.4]],
+      "away": [["bIII bVII IV i", 0.6, 0.6], ["v IV v IV", 0.6, 0.2], ["bVII bIII IV IV", 0.5, 0.5], ["ii IV ii IV", 0.4, 0.2]],
+      "ped5": [],
+      "close": [["IV i IV i", 1.2, 0], ["i IV i i", 1, 0], ["bVII IV i i", 0.8, 0]]
+    },
+    "aeolian": {
+      "home": [
+        ["i bVI bIII bVII", 1.1, 0.7],
+        ["i bVI i bVI", 1, 0],
+        ["i bVII bVI bVII", 0.9, 0.4],
+        ["i bVI bVII i", 0.8, 0.4],
+        ["i i bVI bVII", 0.7, 0.2],
+        ["i iv i iv", 0.6, 0],
+        ["i bVI iv i", 0.6, 0.4]
+      ],
+      "lift": [["bVI bVII i i", 1.2, 0.4], ["bVI bIII bVII i", 1, 0.7], ["bIII bVII i i", 0.7, 0.4], ["iv i bVI bVII", 0.6, 0.4]],
+      "away": [["bIII bVII bVI bVII", 0.7, 0.5], ["iv bVI bIII bVII", 0.6, 0.7], ["bVI bVI bVII bVII", 0.6, 0.1]],
+      "ped5": [],
+      "close": [["bVI bVII i i", 1.2, 0], ["iv i iv i", 0.8, 0], ["i bVI i i", 0.8, 0], ["bVI iv i i", 0.6, 0]]
+    }
+  },
+  "plans": [
+    {
+      "id": "drone",
+      "label": "drone throughout",
+      "pattern": {"all": "T"}
+    },
+    {
+      "id": "dm",
+      "label": "drone, then the bass starts to move",
+      "pattern": {"half": ["T", "R"]}
+    },
+    {
+      "id": "end",
+      "label": "drone, the bass moves at the end",
+      "pattern": {"tail": ["T", "R"], "long": 2, "short": 1}
+    },
+    {
+      "id": "md",
+      "label": "moving bass that settles on a drone",
+      "pattern": {"half": ["R", "T"]}
+    },
+    {
+      "id": "moving",
+      "label": "moving bass",
+      "pattern": {"all": "R"}
+    },
+    {
+      "id": "fifth",
+      "label": "held over the fifth, waiting to come home",
+      "pattern": {"all": "F"}
+    }
+  ],
+  "roles": [
+    {
+      "id": "home",
+      "name": "Verse",
+      "length": 8,
+      "plans": ["drone", "dm", "end", "md", "moving"],
+      "planWeights": {
+        "drone": [[1.3, 2, 0], [0.05, 0, 0]],
+        "dm": [[0.5, 0, 0], [2.4, 1, 1]],
+        "end": [[0.3, 0, 0], [1.6, 1, 1]],
+        "md": [[0.15, 0, 0], [0.8, 1, 1]],
+        "moving": [[1.3, 0, 2], [0.05, 0, 0]]
+      }
+    },
+    {
+      "id": "lift",
+      "name": "Chorus",
+      "length": 8,
+      "plans": ["drone", "dm", "end", "md", "moving"],
+      "planWeights": {
+        "drone": [[0.5, 2, 0]],
+        "dm": [[0.1, 0, 0], [0.4, 1, 0]],
+        "end": [[0.1, 0, 0], [0.5, 1, 0]],
+        "md": [[0.3, 0, 0], [1.6, 1, 1]],
+        "moving": [[0.4, 0, 0], [1.3, 0, 1]]
+      }
+    },
+    {
+      "id": "away",
+      "name": "Middle eight",
+      "length": 8,
+      "plans": ["fifth", "moving", "md", "dm", "drone"],
+      "planWeights": {
+        "fifth": [[0.5, 0, 0], [1.2, 1, 0]],
+        "moving": [[0.3, 0, 0], [1, 0, 1]],
+        "md": [[0.5, 0, 0]],
+        "dm": [[0.3, 0, 0]],
+        "drone": [[0.3, 1, 0]]
+      }
+    },
+    {
+      "id": "turn",
+      "name": "Turnaround",
+      "length": 4,
+      "plans": ["drone", "dm", "end", "md", "moving"],
+      "planWeights": {
+        "drone": [[0.3, 1, 0]],
+        "dm": [[0.3, 0, 0]],
+        "end": [[0.6, 0, 0]],
+        "md": [[0.2, 0, 0]],
+        "moving": [[0.5, 0, 0], [1, 0, 1]]
+      }
+    },
+    {
+      "id": "return",
+      "name": "Coda",
+      "length": 8,
+      "plans": ["drone", "md"],
+      "planWeights": {
+        "drone": [[1.2, 0, 0], [1, 1, 0]],
+        "md": [[0.4, 0, 0], [1, 0, 1]]
+      }
+    }
+  ],
+  "tension": {"0": 0, "2": 0.5, "3": 0.35, "4": 0.35, "5": 0.4, "7": 0.7, "8": 0.45, "9": 0.3, "10": 0.55, "11": 0.5, "default": 0.5},
+  "drone": {"tonicExcludes": [9, 4], "fifthAllows": [0, 5, 2, 7, 10]},
+  "leadIns": [
+    {"w": 1, "offset": -1, "q": "maj", "ext": "", "iv": [0, 4, 7], "sharp": true},
+    {"w": 0.9, "offset": 5, "q": "target", "ext": "", "iv": [0, 4, 7], "extMinor": "m", "ivMinor": [0, 3, 7]},
+    {"w": 0.7, "offset": 7, "q": "maj", "ext": "sus4", "iv": [0, 5, 7]}
+  ],
+  "edge": {
+    "borrow": [[8, "maj"], [3, "maj"], [4, "maj"], [9, "maj"], [2, "maj"], [7, "min"], [5, "maj"], [1, "maj"]]
+  },
+  "rules": {
+    "voiceLo": 50,
+    "voiceHi": 79,
+    "voiceCenter": 63,
+    "voiceMaxSpan": 19,
+    "voiceLowLimit": 57,
+    "voiceLowMinGap": 5,
+    "bassLo": 33,
+    "bassHi": 45,
+    "maxDistinct": 4,
+    "borrowChance": 0.55,
+    "borrowChanceAway": 0.9,
+    "cellDriveSlope": 1.6,
+    "cellDrivePivot": 0.4,
+    "cellMinWeight": 0.15,
+    "minorBase": 0.15,
+    "minorSlope": 2.2,
+    "pedalMisfit": 0.3,
+    "lockedMatch": 8,
+    "lockedMiss": 0.5,
+    "homePlanRepeat": 0.35,
+    "connectBoost": 1.2,
+    "susCapBase": 0.15,
+    "susCapSlope": 0.35,
+    "susReleaseDrop": 0.15,
+    "susLastBase": 0.4,
+    "susLastSlope": 0.6,
+    "susReleaseMul": 1.2,
+    "susReleaseMax": 0.9,
+    "susOtherMul": 0.2,
+    "susRepeatMax": 2,
+    "tailChance": 0.6,
+    "chordVelocity": 72,
+    "bassVelocity": 80,
+    "edgeColorWeight": 1.1,
+    "edgeBorrowChance": 0.8,
+    "edgeDisconnect": 0.5,
+    "edgeMaxBorrowed": 2,
+    "seamKeepsNeighbor": true
+  }
+}

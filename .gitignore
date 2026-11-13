@@ -1,0 +1,21 @@
+# build output
+/build/
+/build-*/
+/dist/
+# test logs: only the ones the documents refer to are kept
+/tests/out/*
+!/tests/out/auval.log
+!/tests/out/enginetests.log
+!/tests/out/hosttest.log
+!/tests/out/hosttest-x86_64.log
+!/tests/out/uitest.log
+!/tests/out/uitest-x86_64.log
+!/tests/out/snapshot.log
+!/tests/out/minos.log
+# files of one machine, not of the project
+/tools/local-prebuild.sh
+/PROGRESS.md
+/JUCE/
+.DS_Store
+*.xcuserstate
+xcuserdata/

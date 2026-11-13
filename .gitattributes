@@ -1,0 +1,4 @@
+# Text files keep LF line ends on every system (the style files are compiled into the plug-in).
+* text=auto eol=lf
+*.ttf binary
+*.png binary
