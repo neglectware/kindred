@@ -113,8 +113,12 @@ int main(int argc, char** argv) {
 
     std::printf("\n3. two linked instances: chords on one track, bass on the other\n");
     Rig c; c.plug = make(); c.prepare();          // joins link A, where b already is
-    pump(900);                                    // the second instance takes the bass by itself, the first keeps the chords
+    // The second instance takes the bass by itself (on its 8th 20 Hz timer tick), the first keeps the chords.
+    // Wait for it, up to 10 s: a slow build server can take well over the 400 ms it needs on a desktop.
     auto* partB = param(*b.plug, "Part"); auto* partC = param(*c.plug, "Part");
+    { const auto t0 = Time::getMillisecondCounter(); pump(400);
+      while (Time::getMillisecondCounter() - t0 < 10000 && ! (partB && partC && partC->getCurrentValueAsText() == "Bass" && partB->getCurrentValueAsText() == "Chords")) pump(50);
+      std::printf("  (parts settled after %u ms)\n", (unsigned) (Time::getMillisecondCounter() - t0)); pump(500); }   // then a few more ticks: the part change rebuilds the schedule on the next tick
     check(partB && partC && partC->getCurrentValueAsText() == "Bass", "the second instance set itself to Bass (" + (partC ? partC->getCurrentValueAsText() : String("?")) + ")");
     check(partB && partB->getCurrentValueAsText() == "Chords", "the first instance, whose part nobody had set by hand, changed itself to Chords (" + (partB ? partB->getCurrentValueAsText() : String("?")) + ")");
     const String chords = render(b), bass = render(c);
